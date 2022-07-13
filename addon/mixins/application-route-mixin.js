@@ -2,7 +2,7 @@ import Mixin from '@ember/object/mixin';
 import { set, computed } from '@ember/object';
 import RSVP, { resolve } from 'rsvp';
 import { inject as service } from '@ember/service';
-import { run } from '@ember/runloop';
+import { cancel, later } from '@ember/runloop';
 import { isEmpty } from '@ember/utils';
 import { getOwner } from '@ember/application';
 import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mixin';
@@ -111,8 +111,8 @@ export default Mixin.create(ApplicationRouteMixin, {
   },
 
   _scheduleJob(jobName, jobFn, timeInMilli) {
-    run.cancel(this.jobName);
-    const job = run.later(this, jobFn, timeInMilli);
+    cancel(this.jobName);
+    const job = later(this, jobFn, timeInMilli);
     set(this, jobName, job);
   },
 
@@ -156,8 +156,8 @@ export default Mixin.create(ApplicationRouteMixin, {
   }),
 
   _clearJobs() {
-    run.cancel(this._renewJob);
-    run.cancel(this._expireJob);
+    cancel(this._renewJob);
+    cancel(this._expireJob);
   },
 
   _processSessionRenewed() {
